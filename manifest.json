@@ -3,6 +3,15 @@
   "description": "A handy tool to log attributes and Selenide, Selenium locators of the clicked element",
   "version": "1.0",
   "manifest_version": 3,
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": ["src/content.js"]
+    }
+  ],
+  "permissions": ["storage"],
   "action": {
     "default_popup": "resources/hello.html",
     "default_icon": "hi.png"
