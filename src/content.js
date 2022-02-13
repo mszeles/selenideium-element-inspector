@@ -12,6 +12,12 @@ document.onclick = function(e){
             console.log("$(By.name('" + target.getAttribute("name") + "'))")
         }
     }
+    var elementsByTagName = document.getElementsByTagName(target.tagName);
+    if (hasOnlyOne(elementsByTagName)) {
+        console.log("$(By.tagName('" + target.tagName + "'))")
+    }
+    if (target.tagName == "a") {
+    }
     console.log("Selenium")
     if (target.hasAttribute("id")) {
         console.log("driver.findElement(By.id('" + target.getAttribute("id") + "'))")
@@ -21,6 +27,9 @@ document.onclick = function(e){
         if (hasOnlyOne(elementsByName)) {
             console.log("driver.findElement(By.name('" + target.getAttribute("name") + "'))")
         }
+    }
+    if (hasOnlyOne(elementsByTagName)) {
+        console.log("driver.findElement(By.tagName('" + target.tagName + "'))")
     }
 }
 
