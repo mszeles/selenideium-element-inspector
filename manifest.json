@@ -1,0 +1,10 @@
+{
+  "name": "Selenideium Element Inspector",
+  "description": "A handy tool to log attributes and Selenide, Selenium locators of the clicked element",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "resources/hello.html",
+    "default_icon": "hi.png"
+  }
+}
