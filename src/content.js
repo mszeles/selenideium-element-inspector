@@ -16,7 +16,18 @@ document.onclick = function(e){
     if (hasOnlyOne(elementsByTagName)) {
         console.log("$(By.tagName('" + target.tagName + "'))")
     }
-    if (target.tagName == "a") {
+    var links = document.getElementsByTagName("a");
+    for (let i = 0; i < links.length; i++) {
+        console.log(links[i])
+    }
+    if (target.tagName.toLowerCase() == "a") {
+        if (hasOnlyOneWithText(links, target.text)) {
+            console.log("$(By.linkText('" + target.text + "'))")
+        }
+    }
+    var allElements = document.getElementsByTagName("*")
+    if (hasOnlyOneWithText(allElements, target.text)) {
+        console.log("$(withText('" + target.text + "'))")
     }
     console.log("Selenium")
     if (target.hasAttribute("id")) {
@@ -31,8 +42,27 @@ document.onclick = function(e){
     if (hasOnlyOne(elementsByTagName)) {
         console.log("driver.findElement(By.tagName('" + target.tagName + "'))")
     }
+    if (target.tagName.toLowerCase() == "a") {
+        if (hasOnlyOneWithText(links, target.text)) {
+            console.log("driver.findElement(By.linkText('" + target.text + "'))")
+        }
+    }
 }
 
 function hasOnlyOne(elementList) {
     return elementList.length == 1;
+}
+
+function hasOnlyOneWithText(elementList, text) {
+    var foundCount = 0;
+    for (let i = 0; i < elementList.length; i++) {
+        if (elementList[i].text != undefined && elementList[i].text.localeCompare(text) == 0) {
+            foundCount++
+            if (foundCount > 1) {
+                return false
+            }
+
+        }
+    }
+    return foundCount == 1
 }
