@@ -3,6 +3,9 @@
   "description": "A handy tool to log attributes and Selenide, Selenium locators of the clicked element",
   "version": "1.0",
   "manifest_version": 3,
+  "background": {
+    "service_worker":"src/background.js"
+  },
   "content_scripts": [
     {
       "matches": [
@@ -11,9 +14,15 @@
       "js": ["src/content.js"]
     }
   ],
-  "permissions": ["storage"],
   "action": {
     "default_popup": "resources/hello.html",
-    "default_icon": "hi.png"
+    "default_icon": {
+      "48": "resources/Selenideium Element Inspector 48x48.jpg",
+      "128": "resources/Selenideium Element Inspector 128x128.jpg"
+    }
+  },
+  "icons": {
+    "48": "resources/Selenideium Element Inspector 48x48.jpg",
+    "128": "resources/Selenideium Element Inspector 128x128.jpg"
   }
 }

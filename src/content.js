@@ -17,9 +17,6 @@ document.onclick = function(e){
         console.log("$(By.tagName('" + target.tagName + "'))")
     }
     var links = document.getElementsByTagName("a");
-    for (let i = 0; i < links.length; i++) {
-        console.log(links[i])
-    }
     if (target.tagName.toLowerCase() == "a") {
         if (hasOnlyOneWithText(links, target.text)) {
             console.log("$(By.linkText('" + target.text + "'))")
@@ -72,7 +69,6 @@ function hasOnlyOneWithText(elementList, text) {
 
 // Source: https://stackoverflow.com/questions/3620116/get-css-path-from-dom-element
 function getCssSelector(e) {
-    console.log(e)
     if (!(e instanceof Element)) {
         return;
     }
