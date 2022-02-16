@@ -4,49 +4,49 @@ document.onclick = function(e){
     console.log(target)
     console.log("Selenide")
     if (target.hasAttribute("id")) {
-        console.log("$(By.id('" + target.getAttribute("id") + "'))")
+        console.log("$(By.id('" + target.getAttribute("id") + "'));")
     }
    if (target.hasAttribute("name")) {
         var elementsByName = document.getElementsByName(target.getAttribute("name"));
         if (hasOnlyOne(elementsByName)) {
-            console.log("$(By.name('" + target.getAttribute("name") + "'))")
+            console.log("$(By.name('" + target.getAttribute("name") + "'));")
         }
     }
     var elementsByTagName = document.getElementsByTagName(target.tagName);
     if (hasOnlyOne(elementsByTagName)) {
-        console.log("$(By.tagName('" + target.tagName + "'))")
+        console.log("$(By.tagName('" + target.tagName + "'));")
     }
     var links = document.getElementsByTagName("a");
     if (target.tagName.toLowerCase() == "a") {
         if (hasOnlyOneWithText(links, target.text)) {
-            console.log("$(By.linkText('" + target.text + "'))")
+            console.log("$(By.linkText('" + target.text + "'));")
         }
     }
     var allElements = document.getElementsByTagName("*")
     if (hasOnlyOneWithText(allElements, target.text)) {
-        console.log("$(withText('" + target.text + "'))")
+        console.log("$(withText('" + target.text + "'));")
     }
-    console.log("$('" + getCssSelector(target) + "'))")
+    console.log("$('" + getCssSelector(target) + "'));")
 
     console.log("Selenium")
     if (target.hasAttribute("id")) {
-        console.log("driver.findElement(By.id('" + target.getAttribute("id") + "'))")
+        console.log("driver.findElement(By.id('" + target.getAttribute("id") + "'));")
     }
     if (target.hasAttribute("name")) {
         var elementsByName = document.getElementsByName(target.getAttribute("name"));
         if (hasOnlyOne(elementsByName)) {
-            console.log("driver.findElement(By.name('" + target.getAttribute("name") + "'))")
+            console.log("driver.findElement(By.name('" + target.getAttribute("name") + "'));")
         }
     }
     if (hasOnlyOne(elementsByTagName)) {
-        console.log("driver.findElement(By.tagName('" + target.tagName + "'))")
+        console.log("driver.findElement(By.tagName('" + target.tagName + "'));")
     }
     if (target.tagName.toLowerCase() == "a") {
         if (hasOnlyOneWithText(links, target.text)) {
-            console.log("driver.findElement(By.linkText('" + target.text + "'))")
+            console.log("driver.findElement(By.linkText('" + target.text + "'));")
         }
     }
-    console.log("driver.findElement(By.cssSelector('" + getCssSelector(target) + "'))")
+    console.log("driver.findElement(By.cssSelector('" + getCssSelector(target) + "'));")
 }
 
 function hasOnlyOne(elementList) {
