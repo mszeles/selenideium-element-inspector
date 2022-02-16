@@ -1,4 +1,4 @@
-# Selenideium Element Inspector - A handy tool to log attributes and Selenide, Selenium locators of the clicked element
+# Selenideium Element Inspector - A handy tool to log attributes and Selenide, Selenium locators of any web element
 
 You can save dozens of minutes daily while automating tests using Selenide or Selenium. You can automagically generate copy-pastable Selenide and Selenium selectors by simply clicking on an element.
 
