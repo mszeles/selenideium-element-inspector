@@ -19,6 +19,6 @@ You can download it from the Chrome Web Store: [Selenideium Element Inspector](h
 
 Any feedback and feature request is much appreciated.
 
-[Buy me a coffee if this tool saves work for you!](https://buymeacoffee.com/mikiszeles) 😊
+[**Buy me a coffee if this tool saves work for you!**](https://buymeacoffee.com/mikiszeles) 😊
 
 📚**Join the Selenide community** on [LinkedIn](https://www.linkedin.com/groups/9154550/)! ✌
