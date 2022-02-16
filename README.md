@@ -12,7 +12,7 @@ You can save dozens of minutes daily while automating tests using Selenide or Se
 6. Click on an element
 7. Select the most nice-looking selector
 8. Copy-paste it into your favourite IDE
-9. Go to 6.
+9. Go to step 6.
 
 You can download it from the Chrome Web Store: [Selenideium Element Inspector](https://chrome.google.com/webstore/detail/selenideium-element-inspe/mgfhljklijclnfeglclagdeoiknnmnda)
 
