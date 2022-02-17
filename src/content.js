@@ -34,6 +34,9 @@ window.onclick = function(e){
     selenideSelectors.push(createSelenideSelector("'" + getCssSelector(target) + "'"))
     seleniumSelectors.push(createSeleniumSelector("'" + getCssSelector(target) + "'"))
 
+    selenideSelectors.push(createSelenideSelector("By.xpath('" + getRelativeXPathSelector(target) + "')"))
+    seleniumSelectors.push(createSeleniumSelector("'" + getRelativeXPathSelector(target) + "'"))
+
     collectAttributeBasedSelectors(target, selenideSelectors, seleniumSelectors)
 
     collectUniqueClassSelectors(target, selenideSelectors, seleniumSelectors)
@@ -57,7 +60,7 @@ function collectAttributeBasedSelectors(element, selenideSelectors, seleniumSele
             console.log(cssSelector)
             var allElements = document.querySelectorAll(cssSelector)
             if (hasOnlyOne(allElements)) {
-                selenideSelectors.push(createSelenideSelector("'" + cssSelector + "'"))
+                selenideSelectors.push(createSelenideXPathSelector("'" + cssSelector + "'"))
                 seleniumSelectors.push(createSeleniumSelector("'" + cssSelector + "'"))
             }
         }
@@ -71,17 +74,23 @@ function collectUniqueClassSelectors(element, selenideSelectors, seleniumSelecto
     }
     var classes = cl.split(" ");
     for (let i = 0; i < classes.length; i++) {
-        var cssSelector = element.tagName.toLowerCase() + "." + classes[i]
-        var allElements = document.querySelectorAll(cssSelector)
-        if (hasOnlyOne(allElements)) {
-            selenideSelectors.push(createSelenideSelector("'" + cssSelector + "'"))
-            seleniumSelectors.push(createSeleniumSelector("'" + cssSelector + "'"))
+        if(classes[i] != "") {
+            var cssSelector = element.tagName.toLowerCase() + "." + classes[i]
+            var allElements = document.querySelectorAll(cssSelector)
+            if (hasOnlyOne(allElements)) {
+                selenideSelectors.push(createSelenideSelector("'" + cssSelector + "'"))
+                seleniumSelectors.push(createSeleniumSelector("'" + cssSelector + "'"))
+            }
         }
     }
 }
 
 function createSelenideSelector(selector) {
     return "$(" + selector + ");"
+}
+
+function createSelenideXPathSelector(selector) {
+    return "$x(" + selector + ");"
 }
 
 function createSeleniumSelector(selector) {
@@ -126,11 +135,47 @@ function getCssSelector(element) {
                    nth++;
             }
             if (nth != 1)
-                selector += ":nth-of-type("+nth+")";
+                selector += ":nth-of-type(" + nth + ")";
         }
         path.unshift(selector);
         element = element.parentNode;
+        if (element == null) {
+            console.log(path)
+            return path.join(" > ");
+        }
 
     }
     return path.join(" > ");
  }
+
+ function getRelativeXPathSelector(element) {
+     if (!(element instanceof Element)) {
+         console.log("Element is not an Element: " + element)
+         return;
+     }
+     var path = [];
+     while (element.nodeType === Node.ELEMENT_NODE) {
+         var selector = element.nodeName.toLowerCase();
+         if (element.id) {
+             selector += "[@id=\"" + element.id + "\"]";
+             path.unshift(selector);
+             break;
+         } else {
+             var previousSibling = element, nth = 0;
+             while (previousSibling = previousSibling.previousElementSibling) {
+                 if (previousSibling.nodeName.toLowerCase() == selector)
+                    nth++;
+             }
+             if (nth != 0) {
+                 selector += "[" + nth + "]";
+             }
+         }
+         path.unshift(selector);
+         if (element.parentNode == null) {
+            return "//" + path.join("/");
+         }
+         element = element.parentNode;
+
+     }
+     return "//" + path.join("/");
+  }
