@@ -36,6 +36,8 @@ window.onclick = function(e){
 
     collectAttributeBasedSelectors(target, selenideSelectors, seleniumSelectors)
 
+    collectUniqueClassSelectors(target, selenideSelectors, seleniumSelectors)
+
     console.log("Selenide")
     for (let i = 0; i < selenideSelectors.length; i++) {
         console.log(selenideSelectors[i])
@@ -58,6 +60,22 @@ function collectAttributeBasedSelectors(element, selenideSelectors, seleniumSele
                 selenideSelectors.push(createSelenideSelector("'" + cssSelector + "'"))
                 seleniumSelectors.push(createSeleniumSelector("'" + cssSelector + "'"))
             }
+        }
+    }
+}
+
+function collectUniqueClassSelectors(element, selenideSelectors, seleniumSelectors) {
+    var cl= element.getAttribute("class")
+    if (cl == null) {
+        return
+    }
+    var classes = cl.split(" ");
+    for (let i = 0; i < classes.length; i++) {
+        var cssSelector = element.tagName.toLowerCase() + "." + classes[i]
+        var allElements = document.querySelectorAll(cssSelector)
+        if (hasOnlyOne(allElements)) {
+            selenideSelectors.push(createSelenideSelector("'" + cssSelector + "'"))
+            seleniumSelectors.push(createSeleniumSelector("'" + cssSelector + "'"))
         }
     }
 }
