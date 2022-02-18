@@ -5,14 +5,17 @@ window.onclick = function(e){
     var selenideSelectors = []
     var seleniumSelectors = []
     if (target.hasAttribute("id")) {
-        selenideSelectors.push(createSelenideSelector("By.id('" + target.getAttribute("id") + "')"))
-        seleniumSelectors.push(createSeleniumSelector("By.id('" + target.getAttribute("id") + "')"))
+        var elementsById = document.getElementsById(target.getAttribute("id"))
+        if (hasOnlyOne(elementsById)) {
+            selenideSelectors.push(createSelenideSelector("By.id('" + target.getAttribute("id") + "')"))
+            seleniumSelectors.push(createSeleniumSelector("By.id('" + target.getAttribute("id") + "')"))
+        }
     }
     if (target.hasAttribute("name")) {
         var elementsByName = document.getElementsByName(target.getAttribute("name"))
         if (hasOnlyOne(elementsByName)) {
-            selenideSelectors.push(createSelenideSelector("By.id('" + target.getAttribute("id") + "')"))
-            seleniumSelectors.push(createSeleniumSelector("By.id('" + target.getAttribute("id") + "')"))
+            selenideSelectors.push(createSelenideSelector("By.name('" + target.getAttribute("id") + "')"))
+            seleniumSelectors.push(createSeleniumSelector("By.name('" + target.getAttribute("id") + "')"))
         }
     }
     var elementsByTagName = document.getElementsByTagName(target.tagName)
