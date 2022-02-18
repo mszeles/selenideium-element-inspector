@@ -31,11 +31,17 @@ window.onclick = function(e){
     if (hasOnlyOneWithText(allElements, target.text)) {
         selenideSelectors.push(createSelenideSelector("withText('" + target.text + "')"))
     }
-    selenideSelectors.push(createSelenideSelector("'" + getCssSelector(target) + "'"))
-    seleniumSelectors.push(createSeleniumSelector("'" + getCssSelector(target) + "'"))
+    var css = getCssSelector(target)
+    if (css !== null) {
+        selenideSelectors.push(createSelenideSelector("'" + getCssSelector(target) + "'"))
+        seleniumSelectors.push(createSeleniumSelector("'" + getCssSelector(target) + "'"))
+    }
 
-    selenideSelectors.push(createSelenideSelector("By.xpath('" + getRelativeXPathSelector(target) + "')"))
-    seleniumSelectors.push(createSeleniumSelector("'" + getRelativeXPathSelector(target) + "'"))
+    var xpath = getRelativeXPathSelector(target)
+    if (xpath !== null) {
+        selenideSelectors.push(createSelenideXPathSelector(xpath))
+        seleniumSelectors.push(createSeleniumSelector("By.xpath('" + xpath + "')"))
+    }
 
     collectAttributeBasedSelectors(target, selenideSelectors, seleniumSelectors)
 
@@ -60,7 +66,7 @@ function collectAttributeBasedSelectors(element, selenideSelectors, seleniumSele
             console.log(cssSelector)
             var allElements = document.querySelectorAll(cssSelector)
             if (hasOnlyOne(allElements)) {
-                selenideSelectors.push(createSelenideXPathSelector("'" + cssSelector + "'"))
+                selenideSelectors.push(createSelenideSelector("'" + cssSelector + "'"))
                 seleniumSelectors.push(createSeleniumSelector("'" + cssSelector + "'"))
             }
         }
@@ -90,7 +96,7 @@ function createSelenideSelector(selector) {
 }
 
 function createSelenideXPathSelector(selector) {
-    return "$x(" + selector + ");"
+    return "$x('" + selector + "');"
 }
 
 function createSeleniumSelector(selector) {
@@ -139,9 +145,9 @@ function getCssSelector(element) {
         }
         path.unshift(selector);
         element = element.parentNode;
-        if (element == null) {
-            console.log(path)
-            return path.join(" > ");
+        if (element === null) {
+            console.log("ERROR: Cannot determine CSS selector. Please report the error by providing the URL and the element at https://github.com/mszeles/selenideium-element-inspector/issues")
+            return null
         }
 
     }
@@ -171,8 +177,9 @@ function getCssSelector(element) {
              }
          }
          path.unshift(selector);
-         if (element.parentNode == null) {
-            return "//" + path.join("/");
+         if (element.parentNode === null) {
+            console.log("ERROR: Cannot determine XPath selector. Please report the error by providing the URL and the element at https://github.com/mszeles/selenideium-element-inspector/issues")
+            return null
          }
          element = element.parentNode;
 
