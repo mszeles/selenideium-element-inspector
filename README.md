@@ -45,7 +45,7 @@ Please [leave a review](https://chrome.google.com/webstore/detail/selenideium-el
 * Printing name based selector for both Selenide and Selenium
 * Printing tagName based selector for both Selenide and Selenium
 * Printing linkText based selector for both Selenide and Selenium
-* Printing linkText based selector for Selenide
+* Printing withText based selector for Selenide
 * Printing CSS based selector for both Selenide and Selenium
 
 
