@@ -22,3 +22,20 @@ Any feedback and feature request is much appreciated.
 [**Buy me a coffee if this tool saves work for you!**](https://buymeacoffee.com/mikiszeles) 😊
 
 📚**Join the Selenide community** on [LinkedIn](https://www.linkedin.com/groups/9154550/)! ✌
+
+
+Release notes
+
+V1.2
+* Logging relative XPath selector.
+* Logging CSS selectors based on any unique attribute.
+* Logging CSS selectors based on any unique class.
+* Automatically adding ";" to the end of the selector, so you really only have to copy-paste the code.
+* Marking the start and end of the logs belonging to Selenideium Element Inspector
+
+V1.1
+* Updated extension description
+
+V1.0
+* Updated extension description
+
