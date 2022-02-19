@@ -1,21 +1,27 @@
 window.onclick = function(e){
+    console.log("------------- Selenideium Element Inspector -------------")
     e = e || window.event;
     var target = e.target || e.srcElement
     console.log(target)
     var selenideSelectors = []
     var seleniumSelectors = []
     if (target.hasAttribute("id")) {
-        var elementsById = document.getElementsById(target.getAttribute("id"))
+        var id = target.getAttribute("id")
+        var elementsById = document.querySelectorAll("*#" + id)
         if (hasOnlyOne(elementsById)) {
-            selenideSelectors.push(createSelenideSelector("By.id('" + target.getAttribute("id") + "')"))
-            seleniumSelectors.push(createSeleniumSelector("By.id('" + target.getAttribute("id") + "')"))
+            selenideSelectors.push(createSelenideSelector("By.id('" + id + "')"))
+            seleniumSelectors.push(createSeleniumSelector("By.id('" + id + "')"))
+        }
+        else {
+            console.log("Warning: There are multiple elements with id: " + id)
         }
     }
     if (target.hasAttribute("name")) {
-        var elementsByName = document.getElementsByName(target.getAttribute("name"))
+        var name = target.getAttribute("name")
+        var elementsByName = document.getElementsByName(name)
         if (hasOnlyOne(elementsByName)) {
-            selenideSelectors.push(createSelenideSelector("By.name('" + target.getAttribute("id") + "')"))
-            seleniumSelectors.push(createSeleniumSelector("By.name('" + target.getAttribute("id") + "')"))
+            selenideSelectors.push(createSelenideSelector("By.name('" + name + "')"))
+            seleniumSelectors.push(createSeleniumSelector("By.name('" + name + "')"))
         }
     }
     var elementsByTagName = document.getElementsByTagName(target.tagName)
@@ -58,6 +64,7 @@ window.onclick = function(e){
     for (let i = 0; i < seleniumSelectors.length; i++) {
         console.log(seleniumSelectors[i])
     }
+    console.log("---------------------------------------------------------")
 }
 
 function collectAttributeBasedSelectors(element, selenideSelectors, seleniumSelectors) {
@@ -66,7 +73,6 @@ function collectAttributeBasedSelectors(element, selenideSelectors, seleniumSele
         var nodeName = attributes[i].nodeName.toLowerCase()
         if (nodeName != 'id' && nodeName != 'class' && nodeName != 'name') {
             var cssSelector = element.tagName.toLowerCase() + "[" + nodeName + " = '" + escape(attributes[i].nodeValue) + "']"
-            console.log(cssSelector)
             var allElements = document.querySelectorAll(cssSelector)
             if (hasOnlyOne(allElements)) {
                 selenideSelectors.push(createSelenideSelector("'" + cssSelector + "'"))
