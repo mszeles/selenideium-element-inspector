@@ -2,14 +2,14 @@ window.onclick = function(e) {
     console.log("------------- Selenideium Element Inspector -------------")
     selenideSelectors = []
     seleniumSelectors = []
-    var selectorGenerators = [new SeleniumJavaSelectorGenerator(), new SelenideSelectorGenerator()]
+    let selectorGenerators = [new SeleniumJavaSelectorGenerator(), new SelenideSelectorGenerator()]
     e = e || window.event;
-    var target = e.target || e.srcElement
+    let target = e.target || e.srcElement
     console.log(target)
     for (i = 0; i < selectorGenerators.length; i++) {
-        var selectorGenerator = selectorGenerators[i]
+        let selectorGenerator = selectorGenerators[i]
         if (target.hasAttribute("id")) {
-            var id = target.getAttribute("id")
+            let id = target.getAttribute("id")
             if (selectorGenerator.hasOnlyOne(document.querySelectorAll("*#" + id))) {
                 selectorGenerator.generateIdBasedSelector(id)
             }
@@ -18,7 +18,7 @@ window.onclick = function(e) {
             }
         }
         if (target.hasAttribute("name")) {
-            var name = target.getAttribute("name")
+            let name = target.getAttribute("name")
             if (selectorGenerator.hasOnlyOne(document.getElementsByName(name))) {
                 selectorGenerator.generateNameBasedSelector(name)
             }
@@ -26,7 +26,7 @@ window.onclick = function(e) {
         if (selectorGenerator.hasOnlyOne(document.getElementsByTagName(target.tagName))) {
             selectorGenerator.generateTagNameBasedSelector(target.tagName)
         }
-        var links = document.getElementsByTagName("a")
+        let links = document.getElementsByTagName("a")
         if (target.tagName.toLowerCase() == "a") {
             if (selectorGenerator.hasOnlyOneWithText(links, target.text)) {
                 selectorGenerator.generateTagNameBasedSelector(target.text)
@@ -35,11 +35,11 @@ window.onclick = function(e) {
         if (selectorGenerator.hasOnlyOneWithText(document.getElementsByTagName("*"), target.text)) {
             selectorGenerator.generateTextBasedSelector(target.text)
         }
-        var css = selectorGenerator.getCssSelector(target)
+        let css = selectorGenerator.getCssSelector(target)
         if (css !== null) {
             selectorGenerator.generateCssBasedSelector(css)
         }
-        var xpath = selectorGenerator.getRelativeXPathSelector(target)
+        let xpath = selectorGenerator.getRelativeXPathSelector(target)
         if (xpath !== null) {
             selectorGenerator.generateXPathBasedSelector(xpath)
         }
@@ -95,12 +95,12 @@ class SelectorGenerator {
     }
 
     collectAttributeBasedSelectors(element) {
-        var attributes = element.attributes
+        let attributes = element.attributes
         for (let i = 0; i < attributes.length; i++) {
-            var nodeName = attributes[i].nodeName.toLowerCase()
+            let nodeName = attributes[i].nodeName.toLowerCase()
             if (nodeName != 'id' && nodeName != 'class' && nodeName != 'name') {
-                var cssSelector = element.tagName.toLowerCase() + "[" + nodeName + " = '" + escape(attributes[i].nodeValue) + "']"
-                var allElements = document.querySelectorAll(cssSelector)
+                let cssSelector = element.tagName.toLowerCase() + "[" + nodeName + " = '" + escape(attributes[i].nodeValue) + "']"
+                let allElements = document.querySelectorAll(cssSelector)
                 if (this.hasOnlyOne(allElements)) {
                     this.generateCssBasedSelector(cssSelector)
                 }
@@ -109,14 +109,14 @@ class SelectorGenerator {
     }
 
     collectUniqueClassSelectors(element) {
-        var cl= element.getAttribute("class")
+        let cl= element.getAttribute("class")
         if (cl == null) {
             return
         }
-        var classes = cl.split(" ");
+        let classes = cl.split(" ");
         for (let i = 0; i < classes.length; i++) {
             if(classes[i] != "") {
-                var cssSelector = element.tagName.toLowerCase() + "." + classes[i]
+                let cssSelector = element.tagName.toLowerCase() + "." + classes[i]
                 if (this.hasOnlyOne(document.querySelectorAll(cssSelector))) {
                     this.generateCssBasedSelector(cssSelector)
                 }
@@ -129,7 +129,7 @@ class SelectorGenerator {
     }
 
     hasOnlyOneWithText(elementList, text) {
-        var foundCount = 0;
+        let foundCount = 0;
         for (let i = 0; i < elementList.length; i++) {
             if (elementList[i].text != undefined && elementList[i].text.localeCompare(text) == 0) {
                 foundCount++
@@ -148,15 +148,15 @@ class SelectorGenerator {
             console.log("Element is not an Element: " + element)
             return;
         }
-        var path = [];
+        let path = [];
         while (element.nodeType === Node.ELEMENT_NODE) {
-            var selector = element.nodeName.toLowerCase();
+            let selector = element.nodeName.toLowerCase();
             if (element.id) {
                 selector += '#' + element.id;
                 path.unshift(selector);
                 break;
             } else {
-                var previousSibling = element, nth = 1;
+                let previousSibling = element, nth = 1;
                 while (previousSibling = previousSibling.previousElementSibling) {
                     if (previousSibling.nodeName.toLowerCase() == selector)
                        nth++;
@@ -180,15 +180,15 @@ class SelectorGenerator {
              console.log("Element is not an Element: " + element)
              return;
          }
-         var path = [];
+         let path = [];
          while (element.nodeType === Node.ELEMENT_NODE) {
-             var selector = element.nodeName.toLowerCase();
+             let selector = element.nodeName.toLowerCase();
              if (element.id) {
                  selector += "[@id=\"" + element.id + "\"]";
                  path.unshift(selector);
                  break;
              } else {
-                 var previousSibling = element, nth = 0;
+                 let previousSibling = element, nth = 0;
                  while (previousSibling = previousSibling.previousElementSibling) {
                      if (previousSibling.nodeName.toLowerCase() == selector)
                         nth++;
