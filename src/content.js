@@ -1,8 +1,7 @@
 window.onclick = function(e) {
     console.log("------------- Selenideium Element Inspector -------------")
-    selenideSelectors = []
-    seleniumSelectors = []
-    let selectorGenerators = [new SeleniumJavaSelectorGenerator(), new SelenideSelectorGenerator(), new SeleniumPythonSelectorGenerator()]
+    let selectorGenerators = [new SeleniumJavaSelectorGenerator(), new SelenideSelectorGenerator(),
+        new SeleniumPythonSelectorGenerator(), new SeleniumCSharpSelectorGenerator()]
     e = e || window.event;
     let target = e.target || e.srcElement
     console.log(target)
@@ -330,5 +329,43 @@ class SeleniumPythonSelectorGenerator extends SelectorGenerator {
 
     generateXPathBasedSelector(xPath) {
         this.selectors.push(this.createSelector("find_element_by_xpath('" + xPath + "')"))
+    }
+}
+
+class SeleniumCSharpSelectorGenerator extends SelectorGenerator {
+
+    getName() {
+        return "Selenium C#"
+    }
+
+    createSelector(selector) {
+        return "driver.FindElement(" + selector + ");"
+    }
+
+    generateIdBasedSelector(id) {
+        this.selectors.push(this.createSelector("By.Id('" + id + "')"))
+    }
+
+    generateNameBasedSelector(name) {
+        this.selectors.push(this.createSelector("By.Name('" + name + "')"))
+    }
+
+    generateTagNameBasedSelector(tagName) {
+        this.selectors.push(this.createSelector("By.TagName('" + tagName + "')"))
+    }
+
+    generateLinkTextBasedSelector(linkText) {
+        this.selectors.push(this.createSelector("By.LinkText('" + linkText + "')"))
+    }
+
+    generateTextBasedSelector(text) {
+    }
+
+    generateCssBasedSelector(css) {
+        this.selectors.push(this.createSelector("By.CssSelector('" + css + "')"))
+    }
+
+    generateXPathBasedSelector(xPath) {
+        this.selectors.push(this.createSelector("By.XPath('" + xPath + "')"))
     }
 }
