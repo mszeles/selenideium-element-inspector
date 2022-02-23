@@ -2,7 +2,8 @@ window.onclick = function(e) {
     console.log("------------- Selenideium Element Inspector -------------")
     let selectorGenerators = [new SeleniumJavaSelectorGenerator(), new SelenideSelectorGenerator(),
         new SeleniumPythonSelectorGenerator(), new SeleniumCSharpSelectorGenerator(),
-        new CypressSelectorGenerator()]
+        new SeleniumJavaScriptSelectorGenerator(),
+        new CypressSelectorGenerator(), new TestCafeSelectorGenerator()]
     e = e || window.event;
     let target = e.target || e.srcElement
     console.log(target)
@@ -117,7 +118,7 @@ class SelectorGenerator {
         for (let i = 0; i < classes.length; i++) {
             if(classes[i] != "") {
                 let cssSelector = element.tagName.toLowerCase() + "." + classes[i]
-                if (this.hasOnlyOne(document.querySelectorAll(cssSelector))) {
+                if (this.hasOnlyOne(document.querySelectorAll(escape(cssSelector)))) {
                     this.generateCssBasedSelector(cssSelector)
                 }
             }
@@ -371,6 +372,48 @@ class SeleniumCSharpSelectorGenerator extends SelectorGenerator {
     }
 }
 
+class SeleniumJavaScriptSelectorGenerator extends SelectorGenerator {
+
+    getName() {
+        return "Selenium JavaScript"
+    }
+
+    createSelector(selector) {
+        return "driver.findElement(" + selector + ");"
+    }
+
+    createXPathSelector(selector) {
+        return "driver.findElement(By.xpath(" + selector + "));"
+    }
+
+    generateIdBasedSelector(id) {
+        this.selectors.push(this.createSelector("By.id('" + id + "')"))
+    }
+
+    generateNameBasedSelector(name) {
+        this.selectors.push(this.createSelector("By.name('" + name + "')"))
+    }
+
+    generateTagNameBasedSelector(tagName) {
+        this.selectors.push(this.createSelector("By.tagName('" + tagName + "')"))
+    }
+
+    generateLinkTextBasedSelector(linkText) {
+        this.selectors.push(this.createSelector("By.linkText('" + linkText + "')"))
+    }
+
+    generateTextBasedSelector(text) {
+    }
+
+    generateCssBasedSelector(css) {
+        this.selectors.push(this.createSelector("By.css('" + css + "')"))
+    }
+
+    generateXPathBasedSelector(xPath) {
+        this.selectors.push(this.createSelector("By.xpath('" + xPath + "')"))
+    }
+}
+
 class CypressSelectorGenerator extends SelectorGenerator {
 
     getName() {
@@ -410,5 +453,43 @@ class CypressSelectorGenerator extends SelectorGenerator {
 
     generateXPathBasedSelector(xPath) {
         this.selectors.push(this.createXPathSelector(xPath))
+    }
+}
+
+class TestCafeSelectorGenerator extends SelectorGenerator {
+
+    getName() {
+        return "TestCafe"
+    }
+
+    createSelector(selector) {
+        return "Selector('" + selector + "')"
+    }
+
+    generateIdBasedSelector(id) {
+        this.selectors.push(this.createSelector("#" + id))
+    }
+
+    generateNameBasedSelector(name) {
+        this.selectors.push("Selector('*[name=" + name + "'])")
+    }
+
+    generateTagNameBasedSelector(tagName) {
+        this.selectors.push("Selector('" + tagName + "')")
+    }
+
+    generateLinkTextBasedSelector(linkText) {
+        this.selectors.push("Selector('a').withText('" + text + "')")
+    }
+
+    generateTextBasedSelector(text) {
+        this.selectors.push("Selector('*').withText('" + text + "')")
+    }
+
+    generateCssBasedSelector(css) {
+        this.selectors.push(this.createSelector(css))
+    }
+
+    generateXPathBasedSelector(xPath) {
     }
 }
