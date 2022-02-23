@@ -2,7 +2,7 @@ window.onclick = function(e) {
     console.log("------------- Selenideium Element Inspector -------------")
     selenideSelectors = []
     seleniumSelectors = []
-    let selectorGenerators = [new SeleniumJavaSelectorGenerator(), new SelenideSelectorGenerator()]
+    let selectorGenerators = [new SeleniumJavaSelectorGenerator(), new SelenideSelectorGenerator(), new SeleniumPythonSelectorGenerator()]
     e = e || window.event;
     let target = e.target || e.srcElement
     console.log(target)
@@ -256,7 +256,7 @@ class SelenideSelectorGenerator extends SelectorGenerator {
 class SeleniumJavaSelectorGenerator extends SelectorGenerator {
 
     getName() {
-        return "Selenium"
+        return "Selenium Java"
     }
 
     createSelector(selector) {
@@ -292,5 +292,43 @@ class SeleniumJavaSelectorGenerator extends SelectorGenerator {
 
     generateXPathBasedSelector(xPath) {
         this.selectors.push(this.createXPathSelector("'" + xPath + "'"))
+    }
+}
+
+class SeleniumPythonSelectorGenerator extends SelectorGenerator {
+
+    getName() {
+        return "Selenium Python"
+    }
+
+    createSelector(selector) {
+        return "driver." + selector
+    }
+
+    generateIdBasedSelector(id) {
+        this.selectors.push(this.createSelector("find_element_by_id('" + id + "')"))
+    }
+
+    generateNameBasedSelector(name) {
+        this.selectors.push(this.createSelector("find_element_by_name('" + name + "')"))
+    }
+
+    generateTagNameBasedSelector(tagName) {
+        this.selectors.push(this.createSelector("find_element_by_tag_name('" + tagName + "')"))
+    }
+
+    generateLinkTextBasedSelector(linkText) {
+        this.selectors.push(this.createSelector("find_element_by_link_text('" + linkText + "')"))
+    }
+
+    generateTextBasedSelector(text) {
+    }
+
+    generateCssBasedSelector(css) {
+        this.selectors.push(this.createSelector("find_element_by_css_selector('" + css + "')"))
+    }
+
+    generateXPathBasedSelector(xPath) {
+        this.selectors.push(this.createSelector("find_element_by_xpath('" + xPath + "')"))
     }
 }
