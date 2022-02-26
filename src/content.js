@@ -152,7 +152,7 @@ class SelectorGenerator {
         for (let i = 0; i < classes.length; i++) {
             if(classes[i] != "") {
                 let cssSelector = element.tagName.toLowerCase() + "." + classes[i]
-                if (this.hasOnlyOne(document.querySelectorAll(escape(cssSelector)))) {
+                if (this.hasOnlyOne(document.querySelectorAll(cssSelector))) {
                     this.storeSelector(this.createSelector(this.generateClassBasedSelector(element.tagName.toLowerCase(), classes[i])))
                 }
             }
@@ -574,7 +574,7 @@ class PlaywrightSelectorGenerator extends SelectorGenerator {
 class SquishSelectorGenerator extends SelectorGenerator {
 
     getName() {
-        return "Squish Python"
+        return "Squish"
     }
 
     generateAttributeBasedSelector(tagName, attributeName, attributeValue) {
