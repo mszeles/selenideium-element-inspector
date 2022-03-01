@@ -1,3 +1,3 @@
-    chrome.runtime.onInstalled.addListener(function() {
-        console.log("Selenideium Element Inspector installed")
-    });
+chrome.runtime.onInstalled.addListener(async function() {
+    console.log("Selenideium Element Inspector installed")
+})

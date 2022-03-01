@@ -1,6 +1,6 @@
 # Selenideium Element Inspector - A handy tool to log attributes and Selenide, Selenium locators of any web element
 
-You can save dozens of minutes daily while automating tests using Selenide or Selenium. You can automagically generate copy-pastable Selenide and Selenium selectors by simply clicking on an element.
+You can save dozens of minutes daily while automating tests using Selenide, Selenium, Cypress, Playwright, TestCafe and Squish. You can automagically generate complete line of copy-pastable selector code by simply clicking on an element.
 
 **Usage**
 
@@ -28,6 +28,18 @@ Please [leave a review](https://chrome.google.com/webstore/detail/selenideium-el
 
 
 ## Release notes
+
+### V2.0
+* Added support for:
+    * Selenium JavaScript
+    * Selenium Python 
+    * Selenium C#
+    * Cypress
+    * TestCafe
+    * Playwright
+    * Squish
+
+* Provide an option to select the testing frameworks for which selectors will be generated
 
 ### V1.2
 * Printing relative XPath selector for both Selenide and Selenium

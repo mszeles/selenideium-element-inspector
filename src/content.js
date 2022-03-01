@@ -1,29 +1,46 @@
-window.onclick = function(e) {
-    console.log("------------- Selenideium Element Inspector -------------")
-    const selectorGeneratorMap = new Map();
-    selectorGeneratorMap.set("selenide", new SelenideSelectorGenerator());
-    selectorGeneratorMap.set("selenium-java", new SeleniumJavaSelectorGenerator());
-    selectorGeneratorMap.set("selenium-javascript", new SeleniumJavaScriptSelectorGenerator());
-    selectorGeneratorMap.set("selenium-python", new SeleniumPythonSelectorGenerator());
-    selectorGeneratorMap.set("selenide-csharp", new SeleniumCSharpSelectorGenerator());
-    selectorGeneratorMap.set("playwright", new PlaywrightSelectorGenerator());
-    selectorGeneratorMap.set("cypress", new CypressSelectorGenerator());
-    selectorGeneratorMap.set("test-cafe", new SelenideSelectorGenerator());
-    selectorGeneratorMap.set("selenide", new TestCafeSelectorGenerator());
-    selectorGeneratorMap.set("squish", new SquishSelectorGenerator());
-    let selectorGenerators = []
-    selectorGeneratorMap.forEach( function(value) {
-        selectorGenerators.push(value)
+const getObjectFromLocalStorage = async function(key) {
+    return new Promise((resolve, reject) => {
+        try {
+            chrome.storage.local.get(key, function(value) {
+                resolve(value[key])
+            })
+        } catch (ex) {
+            reject(ex)
+        }
     })
-//    $(':checkbox').each(function(index, element) {
-//        let id = this.id;
-//        storage.get(id, function(items) {
-//            if (items[id]) {
-//                console.log("Adding selector generator: " + selectorGeneratorMap.get(id))
-//                selectorGenerators.push(selectorGeneratorMap.get(id))
-//            }
-//        })
-//    })
+}
+
+async function collectSelectorGenerators(generatorMap) {
+    let selectorGenerators = []
+    for (const [key, value] of generatorMap) {
+       await collectSelectorGenerator(selectorGenerators, key, value)
+    }
+    return selectorGenerators
+}
+
+async function collectSelectorGenerator(selectorGenerators, key, value) {
+    let settingsValue = await getObjectFromLocalStorage(key)
+    if (settingsValue != false) {
+        selectorGenerators.push(value)
+    }
+    return new Promise(function(resolve, reject) {
+        resolve(value + 1)
+    })
+}
+
+window.onclick = async function(e) {
+    console.log("------------- Selenideium Element Inspector -------------")
+    let selectorGeneratorMap = new Map()
+    selectorGeneratorMap.set("selenide", new SelenideSelectorGenerator())
+    selectorGeneratorMap.set("selenium-java", new SeleniumJavaSelectorGenerator())
+    selectorGeneratorMap.set("selenium-javascript", new SeleniumJavaScriptSelectorGenerator())
+    selectorGeneratorMap.set("selenium-python", new SeleniumPythonSelectorGenerator())
+    selectorGeneratorMap.set("selenium-csharp", new SeleniumCSharpSelectorGenerator())
+    selectorGeneratorMap.set("playwright", new PlaywrightSelectorGenerator())
+    selectorGeneratorMap.set("cypress", new CypressSelectorGenerator())
+    selectorGeneratorMap.set("test-cafe", new TestCafeSelectorGenerator())
+    selectorGeneratorMap.set("squish", new SquishSelectorGenerator())
+    let selectorGenerators = await collectSelectorGenerators(selectorGeneratorMap)
     e = e || window.event;
     let target = e.target || e.srcElement
     console.log(target)
@@ -50,7 +67,7 @@ window.onclick = function(e) {
         let links = document.getElementsByTagName("a")
         if (target.tagName.toLowerCase() == "a") {
             if (selectorGenerator.hasOnlyOneWithText(links, target.text)) {
-                selectorGenerator.generateTagNameBasedSelector(target.text)
+                selectorGenerator.generateLinkTextBasedSelector(target.text)
             }
         }
         if (selectorGenerator.hasOnlyOneWithText(document.getElementsByTagName("*"), target.text)) {
@@ -72,6 +89,7 @@ window.onclick = function(e) {
             console.log(selectorGenerator.selectors[i])
         }
     }
+    console.log("---------------------------------------------------------")
 }
 
 class SelectorGenerator {
@@ -140,7 +158,7 @@ class SelectorGenerator {
     }
 
     generateAttributeBasedSelector(tagName, attributeName, attributeValue) {
-        return this.generateCssBasedSelector(tagName + "[" + attributeName + " = '" + attributeValue + "']")
+        this.generateCssBasedSelector(tagName + "[" + attributeName + " = '" + attributeValue + "']")
     }
 
     collectUniqueClassSelectors(element) {
@@ -153,14 +171,14 @@ class SelectorGenerator {
             if(classes[i] != "") {
                 let cssSelector = element.tagName.toLowerCase() + "." + classes[i]
                 if (this.hasOnlyOne(document.querySelectorAll(cssSelector))) {
-                    this.storeSelector(this.createSelector(this.generateClassBasedSelector(element.tagName.toLowerCase(), classes[i])))
+                    this.generateClassBasedSelector(element.tagName.toLowerCase(), classes[i])
                 }
             }
         }
     }
 
     generateClassBasedSelector(tagName, className) {
-        return tagName + "." + className
+        this.generateCssBasedSelector(tagName + "." + className)
     }
 
     hasOnlyOne(elementList) {
@@ -509,7 +527,7 @@ class TestCafeSelectorGenerator extends SelectorGenerator {
     }
 
     generateLinkTextBasedSelector(linkText) {
-        this.storeSelector("Selector('a').withText('" + text + "')")
+        this.storeSelector("Selector('a').withText('" + linkText + "')")
     }
 
     generateTextBasedSelector(text) {
@@ -555,7 +573,7 @@ class PlaywrightSelectorGenerator extends SelectorGenerator {
     }
 
     generateLinkTextBasedSelector(linkText) {
-        this.storeSelector(this.createSelector("a[text=\"" + text + "\"]"))
+        this.storeSelector(this.createSelector("a[text=\"" + linkText + "\"]"))
     }
 
     generateTextBasedSelector(text) {
