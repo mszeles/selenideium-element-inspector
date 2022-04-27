@@ -4,7 +4,8 @@
   "version": "2.0",
   "manifest_version": 3,
   "permissions": [
-    "storage"
+    "storage",
+    "tabs"
   ],
   "options_page": "resources/options.html",
   "background": {
