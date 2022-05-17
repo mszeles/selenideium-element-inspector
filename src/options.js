@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 function toggle(id, checked) {
     var checkbox = document.getElementById(id);
-    if (checked != checkbox.checked) {
+    if (checked !== checkbox.checked) {
         checkbox.click()
     }
 }

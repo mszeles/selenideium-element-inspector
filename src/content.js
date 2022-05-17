@@ -20,7 +20,7 @@ async function collectSelectorGenerators(generatorMap) {
 
 async function collectSelectorGenerator(selectorGenerators, key, value) {
     let settingsValue = await getObjectFromLocalStorage(key)
-    if (settingsValue != false) {
+    if (settingsValue !== false) {
         selectorGenerators.push(value)
     }
     return new Promise(function(resolve, reject) {
@@ -65,7 +65,7 @@ window.onclick = async function(e) {
             selectorGenerator.generateTagNameBasedSelector(target.tagName)
         }
         let links = document.getElementsByTagName("a")
-        if (target.tagName.toLowerCase() == "a") {
+        if (target.tagName.toLowerCase() === "a") {
             if (selectorGenerator.hasOnlyOneWithText(links, target.text)) {
                 selectorGenerator.generateLinkTextBasedSelector(target.text)
             }
@@ -106,7 +106,7 @@ class SelectorGenerator {
     }
 
     storeSelector(selector) {
-        if (selector == undefined || selector == "undefined") {
+        if (selector === undefined || selector === "undefined") {
             console.log("WARNING!: Invalid selector at: ")
             console.trace()
             return
@@ -146,8 +146,8 @@ class SelectorGenerator {
         let attributes = element.attributes
         for (let i = 0; i < attributes.length; i++) {
             let nodeName = attributes[i].nodeName.toLowerCase()
-            if (nodeName != 'id' && nodeName != 'class' && nodeName != 'name' &&
-                attributes[i].nodeValue != null && attributes[i].nodeValue != undefined) {
+            if (nodeName !== 'id' && nodeName !== 'class' && nodeName !== 'name' &&
+                attributes[i].nodeValue !== null && attributes[i].nodeValue !== undefined) {
                 let cssSelector = element.tagName.toLowerCase() + "[" + nodeName + " = '" + escape(attributes[i].nodeValue) + "']"
                 let allElements = document.querySelectorAll(cssSelector)
                 if (this.hasOnlyOne(allElements)) {
@@ -163,12 +163,12 @@ class SelectorGenerator {
 
     collectUniqueClassSelectors(element) {
         let cl = element.getAttribute("class")
-        if (cl == null || cl == undefined) {
+        if (cl === null || cl === undefined) {
             return
         }
         let classes = cl.split(" ");
         for (let i = 0; i < classes.length; i++) {
-            if(classes[i] != "") {
+            if(classes[i] !== "") {
                 let cssSelector = element.tagName.toLowerCase() + "." + classes[i]
                 if (this.hasOnlyOne(document.querySelectorAll(cssSelector))) {
                     this.generateClassBasedSelector(element.tagName.toLowerCase(), classes[i])
@@ -182,13 +182,13 @@ class SelectorGenerator {
     }
 
     hasOnlyOne(elementList) {
-        return elementList.length == 1;
+        return elementList.length === 1;
     }
 
     hasOnlyOneWithText(elementList, text) {
         let foundCount = 0;
         for (let i = 0; i < elementList.length; i++) {
-            if (elementList[i].text != undefined && elementList[i].text.localeCompare(text) == 0) {
+            if (elementList[i].text !== undefined && elementList[i].text.localeCompare(text) === 0) {
                 foundCount++
                 if (foundCount > 1) {
                     return false
@@ -196,7 +196,7 @@ class SelectorGenerator {
 
             }
         }
-        return foundCount == 1
+        return foundCount === 1
     }
 
     // Source: https://stackoverflow.com/questions/3620116/get-css-path-from-dom-element
@@ -215,10 +215,10 @@ class SelectorGenerator {
             } else {
                 let previousSibling = element, nth = 1;
                 while (previousSibling = previousSibling.previousElementSibling) {
-                    if (previousSibling.nodeName.toLowerCase() == selector)
+                    if (previousSibling.nodeName.toLowerCase() === selector)
                        nth++;
                 }
-                if (nth != 1)
+                if (nth !== 1)
                     selector += ":nth-of-type(" + nth + ")";
             }
             path.unshift(selector);
@@ -247,10 +247,10 @@ class SelectorGenerator {
              } else {
                  let previousSibling = element, nth = 0;
                  while (previousSibling = previousSibling.previousElementSibling) {
-                     if (previousSibling.nodeName.toLowerCase() == selector)
+                     if (previousSibling.nodeName.toLowerCase() === selector)
                         nth++;
                  }
-                 if (nth != 0) {
+                 if (nth !== 0) {
                      selector += "[" + nth + "]";
                  }
              }
@@ -600,7 +600,7 @@ class SquishSelectorGenerator extends SelectorGenerator {
     }
 
     createSelector(selector) {
-        if (selector == undefined || selector == "undefined") {
+        if (selector === undefined || selector === "undefined") {
             console.log("WARNING!: Invalid selector at:")
             console.trace()
         }
