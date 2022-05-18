@@ -1,36 +1,29 @@
-const getObjectFromLocalStorage = async function (key) {
-  return new Promise((resolve, reject) => {
-    try {
-      chrome.storage.local.get(key, function (value) {
-        resolve(value[key]);
-      });
-    } catch (ex) {
-      reject(ex);
-    }
-  });
-};
+import getObjectFromLocalStorage from "./utils/get-object-from-local-storage";
 
-async function collectSelectorGenerators(generatorMap) {
-  let selectorGenerators = [];
+async function collectSelectorGenerators(
+  generatorMap: Map<string, SelectorGenerator>
+) {
+  let selectorGenerators: SelectorGenerator[] = [];
   for (const [key, value] of generatorMap) {
     await collectSelectorGenerator(selectorGenerators, key, value);
   }
   return selectorGenerators;
 }
 
-async function collectSelectorGenerator(selectorGenerators, key, value) {
+async function collectSelectorGenerator(
+  selectorGenerators: SelectorGenerator[],
+  key: string,
+  value: SelectorGenerator
+) {
   let settingsValue = await getObjectFromLocalStorage(key);
   if (settingsValue != false) {
     selectorGenerators.push(value);
   }
-  return new Promise(function (resolve, reject) {
-    resolve(value + 1);
-  });
 }
 
 window.onclick = async function (e) {
   console.log("------------- Selenideium Element Inspector -------------");
-  let selectorGeneratorMap = new Map();
+  let selectorGeneratorMap = new Map<string, SelectorGenerator>();
   selectorGeneratorMap.set("selenide", new SelenideSelectorGenerator());
   selectorGeneratorMap.set(
     "selenium-java",
@@ -56,13 +49,16 @@ window.onclick = async function (e) {
     selectorGeneratorMap
   );
   e = e || window.event;
-  let target = e.target || e.srcElement;
+  let target = (e.target || e.srcElement) as Element;
   console.log(target);
   for (let i = 0; i < selectorGenerators.length; i++) {
     let selectorGenerator = selectorGenerators[i];
     if (target.hasAttribute("id")) {
       let id = target.getAttribute("id");
-      if (selectorGenerator.hasOnlyOne(document.querySelectorAll("*#" + id))) {
+      if (
+        id &&
+        selectorGenerator.hasOnlyOne(document.querySelectorAll("*#" + id))
+      ) {
         selectorGenerator.generateIdBasedSelector(id);
       } else {
         console.log("Warning: There are multiple elements with id: " + id);
@@ -70,7 +66,10 @@ window.onclick = async function (e) {
     }
     if (target.hasAttribute("name")) {
       let name = target.getAttribute("name");
-      if (selectorGenerator.hasOnlyOne(document.getElementsByName(name))) {
+      if (
+        name &&
+        selectorGenerator.hasOnlyOne(document.getElementsByName(name))
+      ) {
         selectorGenerator.generateNameBasedSelector(name);
       }
     }
@@ -83,25 +82,32 @@ window.onclick = async function (e) {
     }
     let links = document.getElementsByTagName("a");
     if (target.tagName.toLowerCase() == "a") {
-      if (selectorGenerator.hasOnlyOneWithText(links, target.text)) {
-        selectorGenerator.generateLinkTextBasedSelector(target.text);
+      if (
+        selectorGenerator.hasOnlyOneWithText(
+          links,
+          (target as HTMLAnchorElement).text
+        )
+      ) {
+        selectorGenerator.generateLinkTextBasedSelector(
+          (target as HTMLAnchorElement).text
+        );
       }
     }
     if (
       selectorGenerator.hasOnlyOneWithText(
         document.getElementsByTagName("*"),
-        target.text
+        (target as any).text
       )
     ) {
-      selectorGenerator.generateTextBasedSelector(target.text);
+      selectorGenerator.generateTextBasedSelector((target as any).text);
     }
     let css = selectorGenerator.getCssSelector(target);
     if (css !== null) {
-      selectorGenerator.generateCssBasedSelector(css);
+      selectorGenerator.generateCssBasedSelector(css as string);
     }
     let xpath = selectorGenerator.getRelativeXPathSelector(target);
     if (xpath !== null) {
-      selectorGenerator.generateXPathBasedSelector(xpath);
+      selectorGenerator.generateXPathBasedSelector(xpath as string);
     }
     selectorGenerator.collectAttributeBasedSelectors(target);
     selectorGenerator.collectUniqueClassSelectors(target);
@@ -114,20 +120,14 @@ window.onclick = async function (e) {
   console.log("---------------------------------------------------------");
 };
 
-class SelectorGenerator {
-  constructor() {
-    this.selectors = [];
-  }
+abstract class SelectorGenerator {
+  selectors: string[] = [];
 
-  getName() {
-    throw new Error("You have to implement the method!");
-  }
+  abstract getName(): string;
 
-  createSelector(selector) {
-    throw new Error("You have to implement the method!");
-  }
+  abstract createSelector(selector: string): string;
 
-  storeSelector(selector) {
+  storeSelector(selector: string) {
     if (selector == undefined || selector == "undefined") {
       console.log("WARNING!: Invalid selector at: ");
       console.trace();
@@ -136,35 +136,35 @@ class SelectorGenerator {
     this.selectors.push(selector);
   }
 
-  generateIdBasedSelector(id) {
+  generateIdBasedSelector(id: string) {
     throw new Error("You have to implement the method!");
   }
 
-  generateNameBasedSelector(name) {
+  generateNameBasedSelector(name: string) {
     throw new Error("You have to implement the method!");
   }
 
-  generateTagNameBasedSelector(tagName) {
+  generateTagNameBasedSelector(tagName: string) {
     throw new Error("You have to implement the method!");
   }
 
-  generateLinkTextBasedSelector(linkText) {
+  generateLinkTextBasedSelector(linkText: string) {
     throw new Error("You have to implement the method!");
   }
 
-  generateTextBasedSelector(text) {
+  generateTextBasedSelector(text: string) {
     throw new Error("You have to implement the method!");
   }
 
-  generateCssBasedSelector(css) {
+  generateCssBasedSelector(css: string) {
     this.storeSelector(this.createSelector("'" + css + "'"));
   }
 
-  generateXPathBasedSelector(xPath) {
+  generateXPathBasedSelector(xPath: string) {
     throw new Error("You have to implement the method!");
   }
 
-  collectAttributeBasedSelectors(element) {
+  collectAttributeBasedSelectors(element: Element) {
     let attributes = element.attributes;
     for (let i = 0; i < attributes.length; i++) {
       let nodeName = attributes[i].nodeName.toLowerCase();
@@ -180,27 +180,31 @@ class SelectorGenerator {
           "[" +
           nodeName +
           " = '" +
-          escape(attributes[i].nodeValue) +
+          escape(attributes[i].nodeValue as string) +
           "']";
         let allElements = document.querySelectorAll(cssSelector);
         if (this.hasOnlyOne(allElements)) {
           this.generateAttributeBasedSelector(
             element.tagName.toLowerCase(),
             nodeName,
-            escape(attributes[i].nodeValue)
+            escape(attributes[i].nodeValue as string)
           );
         }
       }
     }
   }
 
-  generateAttributeBasedSelector(tagName, attributeName, attributeValue) {
+  generateAttributeBasedSelector(
+    tagName: string,
+    attributeName: string,
+    attributeValue: string
+  ) {
     this.generateCssBasedSelector(
       tagName + "[" + attributeName + " = '" + attributeValue + "']"
     );
   }
 
-  collectUniqueClassSelectors(element) {
+  collectUniqueClassSelectors(element: Element) {
     let cl = element.getAttribute("class");
     if (cl == null || cl == undefined) {
       return;
@@ -219,15 +223,15 @@ class SelectorGenerator {
     }
   }
 
-  generateClassBasedSelector(tagName, className) {
+  generateClassBasedSelector(tagName: string, className: string) {
     this.generateCssBasedSelector(tagName + "." + className);
   }
 
-  hasOnlyOne(elementList) {
+  hasOnlyOne(elementList: any) {
     return elementList.length == 1;
   }
 
-  hasOnlyOneWithText(elementList, text) {
+  hasOnlyOneWithText(elementList: HTMLCollectionOf<any>, text: string) {
     let foundCount = 0;
     for (let i = 0; i < elementList.length; i++) {
       if (
@@ -244,7 +248,7 @@ class SelectorGenerator {
   }
 
   // Source: https://stackoverflow.com/questions/3620116/get-css-path-from-dom-element
-  getCssSelector(element) {
+  getCssSelector(element: Element) {
     if (!(element instanceof Element)) {
       console.log("Element is not an Element: " + element);
       return;
@@ -257,7 +261,7 @@ class SelectorGenerator {
         path.unshift(selector);
         break;
       } else {
-        let previousSibling = element,
+        let previousSibling: Element | null = element,
           nth = 1;
         while ((previousSibling = previousSibling.previousElementSibling)) {
           if (previousSibling.nodeName.toLowerCase() == selector) nth++;
@@ -265,7 +269,7 @@ class SelectorGenerator {
         if (nth != 1) selector += ":nth-of-type(" + nth + ")";
       }
       path.unshift(selector);
-      element = element.parentNode;
+      element = element.parentNode as Element;
       if (element === null) {
         console.log(
           "ERROR: Cannot determine CSS selector. Please report the error by providing the URL and the element at https://github.com/mszeles/selenideium-element-inspector/issues"
@@ -276,7 +280,7 @@ class SelectorGenerator {
     return path.join(" > ");
   }
 
-  getRelativeXPathSelector(element) {
+  getRelativeXPathSelector(element: Element) {
     if (!(element instanceof Element)) {
       console.log("Element is not an Element: " + element);
       return;
@@ -289,7 +293,7 @@ class SelectorGenerator {
         path.unshift(selector);
         break;
       } else {
-        let previousSibling = element,
+        let previousSibling: Element | null = element,
           nth = 0;
         while ((previousSibling = previousSibling.previousElementSibling)) {
           if (previousSibling.nodeName.toLowerCase() == selector) nth++;
@@ -305,7 +309,7 @@ class SelectorGenerator {
         );
         return null;
       }
-      element = element.parentNode;
+      element = element.parentNode as Element;
     }
     return "//" + path.join("/");
   }
@@ -316,35 +320,35 @@ class SelenideSelectorGenerator extends SelectorGenerator {
     return "Selenide";
   }
 
-  createSelector(selector) {
+  createSelector(selector: string) {
     return "$(" + selector + ");";
   }
 
-  createXPathSelector(selector) {
+  createXPathSelector(selector: string) {
     return "$x(" + selector + ");";
   }
 
-  generateIdBasedSelector(id) {
+  generateIdBasedSelector(id: string) {
     this.storeSelector(this.createSelector("By.id('" + id + "')"));
   }
 
-  generateNameBasedSelector(name) {
+  generateNameBasedSelector(name: string) {
     this.storeSelector(this.createSelector("By.name('" + name + "')"));
   }
 
-  generateTagNameBasedSelector(tagName) {
+  generateTagNameBasedSelector(tagName: string) {
     this.storeSelector(this.createSelector("By.tagName('" + tagName + "')"));
   }
 
-  generateLinkTextBasedSelector(linkText) {
+  generateLinkTextBasedSelector(linkText: string) {
     this.storeSelector(this.createSelector("By.linkText('" + linkText + "')"));
   }
 
-  generateTextBasedSelector(text) {
+  generateTextBasedSelector(text: string) {
     this.storeSelector(this.createSelector("withText('" + text + "')"));
   }
 
-  generateXPathBasedSelector(xPath) {
+  generateXPathBasedSelector(xPath: string) {
     this.storeSelector(this.createXPathSelector("'" + xPath + "'"));
   }
 }
@@ -354,33 +358,33 @@ class SeleniumJavaSelectorGenerator extends SelectorGenerator {
     return "Selenium Java";
   }
 
-  createSelector(selector) {
+  createSelector(selector: string) {
     return "driver.findElement(" + selector + ");";
   }
 
-  createXPathSelector(selector) {
+  createXPathSelector(selector: string) {
     return "driver.findElement(By.xpath(" + selector + "));";
   }
 
-  generateIdBasedSelector(id) {
+  generateIdBasedSelector(id: string) {
     this.storeSelector(this.createSelector("By.id('" + id + "')"));
   }
 
-  generateNameBasedSelector(name) {
+  generateNameBasedSelector(name: string) {
     this.storeSelector(this.createSelector("By.name('" + name + "')"));
   }
 
-  generateTagNameBasedSelector(tagName) {
+  generateTagNameBasedSelector(tagName: string) {
     this.storeSelector(this.createSelector("By.tagName('" + tagName + "')"));
   }
 
-  generateLinkTextBasedSelector(linkText) {
+  generateLinkTextBasedSelector(linkText: string) {
     this.storeSelector(this.createSelector("By.linkText('" + linkText + "')"));
   }
 
-  generateTextBasedSelector(text) {}
+  generateTextBasedSelector(text: string) {}
 
-  generateXPathBasedSelector(xPath) {
+  generateXPathBasedSelector(xPath: string) {
     this.storeSelector(this.createXPathSelector("'" + xPath + "'"));
   }
 }
@@ -390,41 +394,41 @@ class SeleniumPythonSelectorGenerator extends SelectorGenerator {
     return "Selenium Python";
   }
 
-  createSelector(selector) {
+  createSelector(selector: string) {
     return "driver." + selector;
   }
 
-  generateIdBasedSelector(id) {
+  generateIdBasedSelector(id: string) {
     this.storeSelector(this.createSelector("find_element_by_id('" + id + "')"));
   }
 
-  generateNameBasedSelector(name) {
+  generateNameBasedSelector(name: string) {
     this.storeSelector(
       this.createSelector("find_element_by_name('" + name + "')")
     );
   }
 
-  generateTagNameBasedSelector(tagName) {
+  generateTagNameBasedSelector(tagName: string) {
     this.storeSelector(
       this.createSelector("find_element_by_tag_name('" + tagName + "')")
     );
   }
 
-  generateLinkTextBasedSelector(linkText) {
+  generateLinkTextBasedSelector(linkText: string) {
     this.storeSelector(
       this.createSelector("find_element_by_link_text('" + linkText + "')")
     );
   }
 
-  generateTextBasedSelector(text) {}
+  generateTextBasedSelector(text: string) {}
 
-  generateCssBasedSelector(css) {
+  generateCssBasedSelector(css: string) {
     this.storeSelector(
       this.createSelector("find_element_by_css_selector('" + css + "')")
     );
   }
 
-  generateXPathBasedSelector(xPath) {
+  generateXPathBasedSelector(xPath: string) {
     this.storeSelector(
       this.createSelector("find_element_by_xpath('" + xPath + "')")
     );
@@ -436,33 +440,33 @@ class SeleniumCSharpSelectorGenerator extends SelectorGenerator {
     return "Selenium C#";
   }
 
-  createSelector(selector) {
+  createSelector(selector: string) {
     return "driver.FindElement(" + selector + ");";
   }
 
-  generateIdBasedSelector(id) {
+  generateIdBasedSelector(id: string) {
     this.storeSelector(this.createSelector("By.Id('" + id + "')"));
   }
 
-  generateNameBasedSelector(name) {
+  generateNameBasedSelector(name: string) {
     this.storeSelector(this.createSelector("By.Name('" + name + "')"));
   }
 
-  generateTagNameBasedSelector(tagName) {
+  generateTagNameBasedSelector(tagName: string) {
     this.storeSelector(this.createSelector("By.TagName('" + tagName + "')"));
   }
 
-  generateLinkTextBasedSelector(linkText) {
+  generateLinkTextBasedSelector(linkText: string) {
     this.storeSelector(this.createSelector("By.LinkText('" + linkText + "')"));
   }
 
-  generateTextBasedSelector(text) {}
+  generateTextBasedSelector(text: string) {}
 
-  generateCssBasedSelector(css) {
+  generateCssBasedSelector(css: string) {
     this.storeSelector(this.createSelector("By.CssSelector('" + css + "')"));
   }
 
-  generateXPathBasedSelector(xPath) {
+  generateXPathBasedSelector(xPath: string) {
     this.storeSelector(this.createSelector("By.XPath('" + xPath + "')"));
   }
 }
@@ -472,37 +476,37 @@ class SeleniumJavaScriptSelectorGenerator extends SelectorGenerator {
     return "Selenium JavaScript";
   }
 
-  createSelector(selector) {
+  createSelector(selector: string) {
     return "driver.findElement(" + selector + ");";
   }
 
-  createXPathSelector(selector) {
+  createXPathSelector(selector: string) {
     return "driver.findElement(By.xpath(" + selector + "));";
   }
 
-  generateIdBasedSelector(id) {
+  generateIdBasedSelector(id: string) {
     this.storeSelector(this.createSelector("By.id('" + id + "')"));
   }
 
-  generateNameBasedSelector(name) {
+  generateNameBasedSelector(name: string) {
     this.storeSelector(this.createSelector("By.name('" + name + "')"));
   }
 
-  generateTagNameBasedSelector(tagName) {
+  generateTagNameBasedSelector(tagName: string) {
     this.storeSelector(this.createSelector("By.tagName('" + tagName + "')"));
   }
 
-  generateLinkTextBasedSelector(linkText) {
+  generateLinkTextBasedSelector(linkText: string) {
     this.storeSelector(this.createSelector("By.linkText('" + linkText + "')"));
   }
 
-  generateTextBasedSelector(text) {}
+  generateTextBasedSelector(text: string) {}
 
-  generateCssBasedSelector(css) {
+  generateCssBasedSelector(css: string) {
     this.storeSelector(this.createSelector("By.css('" + css + "')"));
   }
 
-  generateXPathBasedSelector(xPath) {
+  generateXPathBasedSelector(xPath: string) {
     this.storeSelector(this.createSelector("By.xpath('" + xPath + "')"));
   }
 }
@@ -512,37 +516,37 @@ class CypressSelectorGenerator extends SelectorGenerator {
     return "Cypress";
   }
 
-  createSelector(selector) {
+  createSelector(selector: string) {
     return "cy.get('" + selector + "')";
   }
 
-  createXPathSelector(selector) {
+  createXPathSelector(selector: string) {
     return "cy.xpath('" + selector + "')";
   }
 
-  generateIdBasedSelector(id) {
+  generateIdBasedSelector(id: string) {
     this.storeSelector(this.createSelector("#" + id));
   }
 
-  generateNameBasedSelector(name) {
+  generateNameBasedSelector(name: string) {
     this.storeSelector(this.createSelector('*[name="' + name + '"]'));
   }
 
-  generateTagNameBasedSelector(tagName) {
+  generateTagNameBasedSelector(tagName: string) {
     this.storeSelector(this.createSelector(tagName));
   }
 
-  generateLinkTextBasedSelector(linkText) {
+  generateLinkTextBasedSelector(linkText: string) {
     this.storeSelector(this.createSelector('a:contains("' + linkText + '")'));
   }
 
-  generateTextBasedSelector(text) {}
+  generateTextBasedSelector(text: string) {}
 
-  generateCssBasedSelector(css) {
+  generateCssBasedSelector(css: string) {
     this.storeSelector(this.createSelector(css));
   }
 
-  generateXPathBasedSelector(xPath) {
+  generateXPathBasedSelector(xPath: string) {
     this.storeSelector(this.createXPathSelector(xPath));
   }
 }
@@ -552,35 +556,35 @@ class TestCafeSelectorGenerator extends SelectorGenerator {
     return "TestCafe";
   }
 
-  createSelector(selector) {
+  createSelector(selector: string) {
     return "Selector('" + selector + "')";
   }
 
-  generateIdBasedSelector(id) {
+  generateIdBasedSelector(id: string) {
     this.storeSelector(this.createSelector("#" + id));
   }
 
-  generateNameBasedSelector(name) {
+  generateNameBasedSelector(name: string) {
     this.storeSelector("Selector('*[name=" + name + "'])");
   }
 
-  generateTagNameBasedSelector(tagName) {
+  generateTagNameBasedSelector(tagName: string) {
     this.storeSelector("Selector('" + tagName + "')");
   }
 
-  generateLinkTextBasedSelector(linkText) {
+  generateLinkTextBasedSelector(linkText: string) {
     this.storeSelector("Selector('a').withText('" + linkText + "')");
   }
 
-  generateTextBasedSelector(text) {
+  generateTextBasedSelector(text: string) {
     this.storeSelector("Selector('*').withText('" + text + "')");
   }
 
-  generateCssBasedSelector(css) {
+  generateCssBasedSelector(css: string) {
     this.storeSelector(this.createSelector(css));
   }
 
-  generateXPathBasedSelector(xPath) {}
+  generateXPathBasedSelector(xPath: string) {}
 }
 
 class PlaywrightSelectorGenerator extends SelectorGenerator {
@@ -588,45 +592,49 @@ class PlaywrightSelectorGenerator extends SelectorGenerator {
     return "Playwright";
   }
 
-  createSelector(selector) {
+  createSelector(selector: string) {
     return "await page.locator('" + selector + "')";
   }
 
-  createXPathSelector(selector) {
+  createXPathSelector(selector: string) {
     return "element." + selector;
   }
 
-  generateAttributeBasedSelector(tagName, attributeName, attributeValue) {
+  generateAttributeBasedSelector(
+    tagName: string,
+    attributeName: string,
+    attributeValue: string
+  ) {
     return this.generateCssBasedSelector(
       tagName + "[" + attributeName + ' = "' + attributeValue + '"]'
     );
   }
 
-  generateIdBasedSelector(id) {
+  generateIdBasedSelector(id: string) {
     this.storeSelector(this.createSelector("id=" + id));
   }
 
-  generateNameBasedSelector(name) {
+  generateNameBasedSelector(name: string) {
     this.storeSelector(this.createSelector('name="' + name + '"'));
   }
 
-  generateTagNameBasedSelector(tagName) {
+  generateTagNameBasedSelector(tagName: string) {
     this.storeSelector(this.createSelector(tagName));
   }
 
-  generateLinkTextBasedSelector(linkText) {
+  generateLinkTextBasedSelector(linkText: string) {
     this.storeSelector(this.createSelector('a[text="' + linkText + '"]'));
   }
 
-  generateTextBasedSelector(text) {
+  generateTextBasedSelector(text: string) {
     this.storeSelector(this.createSelector('text="' + text + '"'));
   }
 
-  generateCssBasedSelector(css) {
+  generateCssBasedSelector(css: string) {
     this.storeSelector(this.createSelector(css));
   }
 
-  generateXPathBasedSelector(xPath) {
+  generateXPathBasedSelector(xPath: string) {
     this.storeSelector(this.createSelector("xpath=" + xPath));
   }
 }
@@ -636,7 +644,11 @@ class SquishSelectorGenerator extends SelectorGenerator {
     return "Squish";
   }
 
-  generateAttributeBasedSelector(tagName, attributeName, attributeValue) {
+  generateAttributeBasedSelector(
+    tagName: string,
+    attributeName: string,
+    attributeValue: string
+  ) {
     return this.storeSelector(
       this.createSelector(
         "{tagName='" +
@@ -650,7 +662,7 @@ class SquishSelectorGenerator extends SelectorGenerator {
     );
   }
 
-  createSelector(selector) {
+  createSelector(selector: string) {
     if (selector == undefined || selector == "undefined") {
       console.log("WARNING!: Invalid selector at:");
       console.trace();
@@ -658,35 +670,35 @@ class SquishSelectorGenerator extends SelectorGenerator {
     return 'findObject("' + selector + '")';
   }
 
-  createXPathSelector(selector) {
+  createXPathSelector(selector: string) {
     return "self.container." + selector;
   }
 
-  generateIdBasedSelector(id) {
+  generateIdBasedSelector(id: string) {
     this.storeSelector(this.createSelector("{id='" + id + "'}"));
   }
 
-  generateNameBasedSelector(name) {
+  generateNameBasedSelector(name: string) {
     this.storeSelector(this.createSelector("{name='" + name + "'}"));
   }
 
-  generateTagNameBasedSelector(tagName) {
+  generateTagNameBasedSelector(tagName: string) {
     this.storeSelector(this.createSelector("{tagName='" + tagName + "'}"));
   }
 
-  generateLinkTextBasedSelector(linkText) {
+  generateLinkTextBasedSelector(linkText: string) {
     this.storeSelector(
       this.createSelector("{tagName='a', innerText='" + linkText + "'}")
     );
   }
 
-  generateTextBasedSelector(text) {
+  generateTextBasedSelector(text: string) {
     this.storeSelector(this.createSelector("{innerText='" + text + "'}"));
   }
 
-  generateCssBasedSelector(css) {}
+  generateCssBasedSelector(css: string) {}
 
-  generateXPathBasedSelector(xPath) {
+  generateXPathBasedSelector(xPath: string) {
     this.storeSelector(
       this.createXPathSelector("evaluateXPath('" + xPath + "')")
     );

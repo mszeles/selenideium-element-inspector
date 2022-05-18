@@ -1,3 +1,5 @@
+import getObjectFromLocalStorage from "./utils/get-object-from-local-storage";
+
 let settings = [
   "selenide",
   "selenium-java",
@@ -9,8 +11,9 @@ let settings = [
   "test-cafe",
   "squish",
 ];
-const saveObjectInLocalStorage = async function (obj) {
-  return new Promise((resolve, reject) => {
+
+const saveObjectInLocalStorage = async function <T>(obj: T) {
+  return new Promise<void>((resolve, reject) => {
     try {
       console.log("Saving: " + JSON.stringify(obj));
       chrome.storage.local.set(obj, function () {
@@ -22,31 +25,16 @@ const saveObjectInLocalStorage = async function (obj) {
   });
 };
 
-const getObjectFromLocalStorage = async function (key) {
-  return new Promise((resolve, reject) => {
-    try {
-      chrome.storage.local.get(key, function (value) {
-        resolve(value[key]);
-      });
-    } catch (ex) {
-      reject(ex);
-    }
-  });
-};
-
-async function storeSettings(id) {
+async function storeSettings(id: string) {
   console.log("Storing setting for: #" + id);
-  if (document.getElementById(id).checked) {
-    await saveObjectInLocalStorage({ [id]: true });
-  } else {
-    await saveObjectInLocalStorage({ [id]: false });
-  }
+  const { checked } = document.getElementById(id) as HTMLInputElement;
+  await saveObjectInLocalStorage({ [id]: checked });
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
   for (let i = 0; i < settings.length; i++) {
     let id = settings[i];
-    let savedOption = await getObjectFromLocalStorage(id);
+    let savedOption = (await getObjectFromLocalStorage(id)) as boolean;
     console.log("Saved option: " + savedOption);
     if (savedOption == null) {
       console.log("Setting checked for " + id + " to true");
@@ -58,14 +46,14 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 });
 
-function toggle(id, checked) {
-  var checkbox = document.getElementById(id);
+function toggle(id: string, checked: boolean) {
+  const checkbox = document.getElementById(id) as HTMLInputElement;
   if (checked != checkbox.checked) {
     checkbox.click();
   }
 }
 
-document.getElementById("save").addEventListener("click", async function () {
+document.getElementById("save")?.addEventListener("click", async function () {
   for (let i = 0; i < settings.length; i++) {
     await storeSettings(settings[i]);
   }
