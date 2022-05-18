@@ -1,0 +1,30 @@
+{
+  "name": "selenideium-element-inspector",
+  "version": "0.0.0",
+  "description": "A handy tool to log attributes and Selenide, Selenium locators of the clicked element",
+  "private": true,
+  "scripts": {
+    "watch": "webpack --mode=development --watch --config config/webpack.config.js",
+    "build": "webpack --mode=production --config config/webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mszeles/selenideium-element-inspector.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mszeles/selenideium-element-inspector/issues"
+  },
+  "homepage": "https://github.com/mszeles/selenideium-element-inspector#readme",
+  "devDependencies": {
+    "@types/chrome": "^0.0.181",
+    "copy-webpack-plugin": "^10.2.4",
+    "css-loader": "^6.7.1",
+    "file-loader": "^6.2.0",
+    "mini-css-extract-plugin": "^2.6.0",
+    "ts-loader": "^9.2.8",
+    "typescript": "^4.6.3",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-merge": "^5.8.0"
+  }
+}
