@@ -26,6 +26,14 @@ Please [leave a review](https://chrome.google.com/webstore/detail/selenideium-el
 
 📚**Join the Selenide community** on [LinkedIn](https://www.linkedin.com/groups/9154550/)! ✌
 
+## Running locally
+
+1. `npm i` - installs dependencies
+2. `npm run watch` - runs in development mode, watches for file changes
+3. Open chrome://extensions
+4. Check the Developer mode checkbox
+5. Click on the Load unpacked extension button
+6. Select the folder called `build`
 
 ## Release notes
 
