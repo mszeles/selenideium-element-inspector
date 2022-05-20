@@ -1,0 +1,28 @@
+{
+  "name": "Selenideium Element Inspector",
+  "description": "A handy tool to log attributes and Selenide, Selenium, Cypress, Playwright, Squish and TestCafe locators of the clicked element.",
+  "version": "2.0",
+  "manifest_version": 3,
+  "permissions": ["storage"],
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "hello.html",
+    "default_icon": {
+      "48": "Selenideium Element Inspector 48x48.jpg",
+      "128": "Selenideium Element Inspector 128x128.jpg"
+    }
+  },
+  "icons": {
+    "48": "Selenideium Element Inspector 48x48.jpg",
+    "128": "Selenideium Element Inspector 128x128.jpg"
+  }
+}
