@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 function toggle(id: string, checked: boolean) {
   const checkbox = document.getElementById(id) as HTMLInputElement;
-  if (checked != checkbox.checked) {
+  if (checked !== checkbox.checked) {
     checkbox.click();
   }
 }

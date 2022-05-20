@@ -16,7 +16,7 @@ async function collectSelectorGenerator(
   value: SelectorGenerator
 ) {
   let settingsValue = await getObjectFromLocalStorage(key);
-  if (settingsValue != false) {
+  if (settingsValue !== false) {
     selectorGenerators.push(value);
   }
 }
@@ -81,7 +81,7 @@ window.onclick = async function (e) {
       selectorGenerator.generateTagNameBasedSelector(target.tagName);
     }
     let links = document.getElementsByTagName("a");
-    if (target.tagName.toLowerCase() == "a") {
+    if (target.tagName.toLowerCase() === "a") {
       if (
         selectorGenerator.hasOnlyOneWithText(
           links,
@@ -128,7 +128,7 @@ abstract class SelectorGenerator {
   abstract createSelector(selector: string): string;
 
   storeSelector(selector: string) {
-    if (selector == undefined || selector == "undefined") {
+    if (selector === undefined || selector === "undefined") {
       console.log("WARNING!: Invalid selector at: ");
       console.trace();
       return;
@@ -169,11 +169,11 @@ abstract class SelectorGenerator {
     for (let i = 0; i < attributes.length; i++) {
       let nodeName = attributes[i].nodeName.toLowerCase();
       if (
-        nodeName != "id" &&
-        nodeName != "class" &&
-        nodeName != "name" &&
-        attributes[i].nodeValue != null &&
-        attributes[i].nodeValue != undefined
+        nodeName !== "id" &&
+        nodeName !== "class" &&
+        nodeName !== "name" &&
+        attributes[i].nodeValue !== null &&
+        attributes[i].nodeValue !== undefined
       ) {
         let cssSelector =
           element.tagName.toLowerCase() +
@@ -206,12 +206,12 @@ abstract class SelectorGenerator {
 
   collectUniqueClassSelectors(element: Element) {
     let cl = element.getAttribute("class");
-    if (cl == null || cl == undefined) {
+    if (cl === null || cl === undefined) {
       return;
     }
     let classes = cl.split(" ");
     for (let i = 0; i < classes.length; i++) {
-      if (classes[i] != "") {
+      if (classes[i] !== "") {
         let cssSelector = element.tagName.toLowerCase() + "." + classes[i];
         if (this.hasOnlyOne(document.querySelectorAll(cssSelector))) {
           this.generateClassBasedSelector(
@@ -228,15 +228,15 @@ abstract class SelectorGenerator {
   }
 
   hasOnlyOne(elementList: any) {
-    return elementList.length == 1;
+    return elementList.length === 1;
   }
 
   hasOnlyOneWithText(elementList: HTMLCollectionOf<any>, text: string) {
     let foundCount = 0;
     for (let i = 0; i < elementList.length; i++) {
       if (
-        elementList[i].text != undefined &&
-        elementList[i].text.localeCompare(text) == 0
+        elementList[i].text !== undefined &&
+        elementList[i].text.localeCompare(text) === 0
       ) {
         foundCount++;
         if (foundCount > 1) {
@@ -244,7 +244,7 @@ abstract class SelectorGenerator {
         }
       }
     }
-    return foundCount == 1;
+    return foundCount === 1;
   }
 
   // Source: https://stackoverflow.com/questions/3620116/get-css-path-from-dom-element
@@ -264,7 +264,7 @@ abstract class SelectorGenerator {
         let previousSibling: Element | null = element,
           nth = 1;
         while ((previousSibling = previousSibling.previousElementSibling)) {
-          if (previousSibling.nodeName.toLowerCase() == selector) nth++;
+          if (previousSibling.nodeName.toLowerCase() === selector) nth++;
         }
         if (nth != 1) selector += ":nth-of-type(" + nth + ")";
       }
@@ -296,7 +296,7 @@ abstract class SelectorGenerator {
         let previousSibling: Element | null = element,
           nth = 0;
         while ((previousSibling = previousSibling.previousElementSibling)) {
-          if (previousSibling.nodeName.toLowerCase() == selector) nth++;
+          if (previousSibling.nodeName.toLowerCase() === selector) nth++;
         }
         if (nth != 0) {
           selector += "[" + nth + "]";
@@ -663,7 +663,7 @@ class SquishSelectorGenerator extends SelectorGenerator {
   }
 
   createSelector(selector: string) {
-    if (selector == undefined || selector == "undefined") {
+    if (selector === undefined || selector === "undefined") {
       console.log("WARNING!: Invalid selector at:");
       console.trace();
     }
