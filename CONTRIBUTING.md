@@ -4,11 +4,12 @@ Just do the following and I will reward you with a ☕:
 
 - **Report a valid bug**
 - **Submit an approved feature request**
-- **Fix a reported bug**
+- **Fix a reported and approved bug**
 - **Implement an approved feature request**
 - **Write an article about your experiences with Selenideium Element Inspector. In this case, you can be sure I will share your article on Twitter and LinkedIn too.**
 
 ## QA
+
 **Q**: Can I get a ☕ for multiple bug reports?<br>
 **A**: Sure, just make sure you submit them as separate issues.
 
@@ -20,6 +21,15 @@ Just do the following and I will reward you with a ☕:
 
 **Q**: What if I contribute a lot? Can I earn extra ☕?<br>
 **A**: Sure. I really admire returning contributors, so after every 5 contributions, I will buy an extra ☕ for you. 😊
+
+**Q**: When will I get my ☕ for submitting a bug report or enhancement request<br>
+**A**: You will get ☕ when it has been approved by me. If I consider the request irrelevant then I won't approve it. As soon as I approve you will get your coffee.
+
+**Q**: When will I get my ☕ for my pull request<br>
+**A**: You will get ☕ when the pull request for an approved ticket has been reviewed and merged into the project.
+
+**Q**: For how long I have to wait to get my ☕?<br>
+**A**: It depends. It might be a few days or weeks depending on how much free time I have. I have a family, a full time job and multiple other projects, so I am not always focusing on Selenideium Element Inspector, but I will do my best.
 
 **Q**: I love Selenidium Element Inspector as I can really save a lot of time daily. Can I buy you a ☕?<br>
 **A**: Sure. Just click on the link below!
