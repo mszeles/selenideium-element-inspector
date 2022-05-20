@@ -3,7 +3,7 @@ Thank you very much for your contribution.
 Just do the following and I will reward you with a ☕:
 
 - **Report a valid bug**
-- **Submit an approved feature request**
+- **Submit a feature request**
 - **Fix a reported and approved bug**
 - **Implement an approved feature request**
 - **Write an article about your experiences with Selenideium Element Inspector. In this case, you can be sure I will share your article on Twitter and LinkedIn too.**
@@ -21,6 +21,9 @@ Just do the following and I will reward you with a ☕:
 
 **Q**: What if I contribute a lot? Can I earn extra ☕?<br>
 **A**: Sure. I really admire returning contributors, so after every 5 contributions, I will buy an extra ☕ for you. 😊
+
+**Q**: When will an issue become approved?<br>
+**A**: An issue get approved when I verified it and assigned a milestone to it.
 
 **Q**: When will I get my ☕ for submitting a bug report or enhancement request<br>
 **A**: You will get ☕ when it has been approved by me. If I consider the request irrelevant then I won't approve it. As soon as I approve you will get your coffee.
